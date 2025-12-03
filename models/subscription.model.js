@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import dayjs from "dayjs";
 
 const subscriptionSchema = new mongoose.Schema({
     name: {
@@ -65,16 +66,17 @@ const subscriptionSchema = new mongoose.Schema({
 }, { timestamps: true });
 //Auto calculate the renewal date if missing
 subscriptionSchema.pre('save', async function() {
-    if(!this.renewalDate) {
-        const renewalPeriods = {
-            daily: 1,
-            weekly: 7,
-            monthly: 30,
-            yearly: 365,
-        };
+    if (!this.renewalDate) {
+        const start = dayjs(this.startDate);
 
-        this.renewalDate = new Date(this.startDate);
-        this.renewalDate.setDate(this.renewalDate.getDate() + renewalPeriods[this.frequency]);
+        const renewalDate = {
+            daily: start.add(1, "day"),
+            weekly: start.add(1, "week"),
+            monthly: start.add(1, "month"),
+            yearly: start.add(1, "year"),
+        }[this.frequency];
+
+        this.renewalDate = renewalDate.toDate();
     }
 
     if (this.renewalDate < new Date()) {
