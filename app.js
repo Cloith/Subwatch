@@ -1,6 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import { PORT } from "./config/env.js";
+import {PORT, SERVER_URL} from "./config/env.js";
 
 import userRouter from "./routes/user.routes.js";
 import authRouter from "./routes/auth.routes.js";
@@ -33,9 +33,9 @@ app.get("/", (req, res) => {
     res.send('Welcome to Subscription tracker API');
 });
 
+
 app.listen(PORT, async() => {
-    console.log(`Subscription tracker api is running on http://localhost:${PORT}`);
-    console.log(process.env.NODE_ENV);
+    console.log(`Subscription tracker api is running on ${ SERVER_URL } in ${process.env.NODE_ENV} mode`);
     await connectToDatabase();
 });
 
